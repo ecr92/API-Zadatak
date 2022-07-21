@@ -5,180 +5,162 @@ const orderId = 1;
 const userName= "ecr";
 const petStatus = 'sold';
 
+let del = false;
+
 test.describe('Pet', () => {
 
-  //NISI NI KRENUO 
-  test('uploadImage', async ({ request,baseURL }) => {
-      const response = await request.post(baseURL+'pet/'+petId+'/uploadImage', {
+  test('Add a new pet to the store', async ({ request,baseURL }) => { 
+    const response = await request.post(baseURL+'pet', {
+        data:
+        {
+            "id": petId,
+            "category": {
+              "id": petId,
+              "name": "ecr"
+            },
+            "name": "doggie",
+            "photoUrls": [
+              "string"
+            ],
+            "tags": [
+              {
+                "id": 0,
+                "name": "string"
+              }
+            ],
+            "status": "available"
+        },
+    })
+    expect(response.status()).toBe(200);
+    console.log(await response.json());
+    
+    expect(await response.json()).toStrictEqual(
+      {  
+        "id": petId,
+        "category": {
+          "id": petId,
+          "name": "ecr"
+        },
+        "name": "doggie",
+        "photoUrls": [
+          "string"
+        ],
+        "tags": [
+          {
+            "id": 0,
+            "name": "string"
+          }
+        ],
+        "status": "available"
+      }
+    ); 
+      })
+  //Radi ali prije toga se treba pokrenut add new pet
+  test('find pet by ID', async ({ request,baseURL }) => {
+    const response = await request.get(baseURL+'pet/'+ petId, { })
+    console.log(await response.json());
+    expect(response.status()).toBe(200);
+    expect(await response.json()).toStrictEqual(
+      {
+        "id": petId,
+        "category": {
+          "id": petId,
+          "name": "ecr"
+        },
+        "name": "doggie",
+        "photoUrls": [
+          "string"
+        ],
+        "tags": [
+          {
+            "id": 0,
+            "name": "string"
+          }
+        ],
+        "status": "available"
+      }
+    );
+      })
+  test('Updates a pet in the store with form data', async ({ request,baseURL }) => {
+  console.log(baseURL+'pet/'+ petId)
+  const response = await request.post(baseURL+'pet/'+ petId, {   
+    headers: {
+     'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    multipart:{
+      "name":"ecr update",
+      "status":petStatus
+    }
+})
+      expect(response.status()).toBe(200);
+      expect(await response.json()).toEqual(
+          {  
+            "code": 200,
+            "type": "unknown",
+            "message": "1000"
+          }
+        ); 
+      })
+  test('Update an existing pet', async ({ request,baseURL }) => {
+      const response = await request.put(baseURL+'pet', {
           data:
           {
-          "additionalMetadata" :"est",
-          "file": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKd58klvw4H8lAfefJkQc0PsU7_0o0VGjxjQSl8cXoeyIa0R542phKWT5SEJP1orXrYCE&usqp=CAU"
+            "id": petId,
+            "category": {
+              "id": petId,
+              "name": "string"
+            },
+            "name": "T-Rex",
+            "photoUrls": [
+              "string"
+            ],
+            "tags": [
+              {
+                "id": petId,
+                "name": "string"
+              }
+            ],
+            "status": "available"
           },
       })
       expect(response.status()).toBe(200);
       console.log(await response.json());
+      expect(await response.json()).toStrictEqual( {  
+          id: petId,
+          category: { id: petId, name: 'string' },
+          name: 'T-Rex',
+          photoUrls: [ 'string' ],
+          tags: [ { id: petId, name: 'string' } ],
+          status: 'available'
+        }
+      ); 
       })
-
-  ///RADI Add a new pet to the store
-  test('Add a new pet to the store', async ({ request,baseURL }) => { 
-          const response = await request.post(baseURL+'pet', {
-              data:
-              {
-                  "id": petId,
-                  "category": {
-                    "id": petId,
-                    "name": "ecr"
-                  },
-                  "name": "doggie",
-                  "photoUrls": [
-                    "string"
-                  ],
-                  "tags": [
-                    {
-                      "id": 0,
-                      "name": "string"
-                    }
-                  ],
-                  "status": "available"
-              },
-          })
-          expect(response.status()).toBe(200);
-          console.log(await response.json());
-          
-          expect(await response.json()).toStrictEqual(
-            {  
-              "id": petId,
-              "category": {
-                "id": petId,
-                "name": "ecr"
-              },
-              "name": "doggie",
-              "photoUrls": [
-                "string"
-              ],
-              "tags": [
-                {
-                  "id": 0,
-                  "name": "string"
-                }
-              ],
-              "status": "available"
-            }
-          ); 
+  test('uploadImage', async ({ request,baseURL }) => {
+      const response = await request.post(baseURL+'pet/'+petId+'/uploadImage', {
+        headers: {
+          ContentType: "multipart/form-data",
+         },
+         multipart:
+          {
+          "additionalMetadata" :"test image",
+          "file": "https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/02/322868_1100-800x825.jpg"
+          }
       })
-
-  ///RADI find pet by status ali treba dodat nekakav status check
-  test('find pet by status', async ({ request,baseURL }) => {
+      expect(response.status()).toBe(200);
+      console.log(await response.json());
+      })
+  test('Finds Pets by status', async ({ request,baseURL }) => {
     const myStatus = {status: 'available'};
           const response = await request.get("https://petstore.swagger.io/v2/pet/findByStatus?status="+petStatus, { })
           console.log(await response.json());
           expect(response.status()).toBe(200);
       });
-
-  //Radi ali prije toga se treba pokrenut add new pet
-  test('find pet by ID', async ({ request,baseURL }) => {
-          const response = await request.get(baseURL+'pet/'+ petId, { })
-          console.log(await response.json());
-          expect(response.status()).toBe(200);
-          expect(await response.json()).toEqual(
-            {
-              "id": petId,
-              "category": {
-                "id": petId,
-                "name": "ecr"
-              },
-              "name": "doggie",
-              "photoUrls": [
-                "string"
-              ],
-              "tags": [
-                {
-                  "id": 0,
-                  "name": "string"
-                }
-              ],
-              "status": "available"
-            }
-          );
-      })
-
-  //415 ERROR!
-  test.only('Updates a pet in the store with form data', async ({ request,baseURL }) => {
-    console.log(baseURL+'pet/'+ petId)
-    const response = await request.post(baseURL+'pet/'+petId, {
-      data: {
-          name: "ecr",
-          status: "available"
-      },
-  })
-          expect(response.status()).toBe(200);
-          expect(await response.json()).toEqual(
-            {  
-              "id": petId,
-              "category": {
-                "id": petId,
-                "name": "updateddddd"
-              },
-              "name": "doggie",
-              "photoUrls": [
-                "string"
-              ],
-              "tags": [
-                {
-                  "id": 0,
-                  "name": "string"
-                }
-              ],
-              "status": "available"
-            }
-          ); 
-      })
-
-  //Radi ali prije toga se treba pokrenut add new pet
-  test('Update an existing pet', async ({ request,baseURL }) => {
-          const response = await request.put(baseURL+'pet', {
-              data:
-              {
-                "id": petId,
-                "category": {
-                  "id": petId,
-                  "name": "string"
-                },
-                "name": "T-Rex",
-                "photoUrls": [
-                  "string"
-                ],
-                "tags": [
-                  {
-                    "id": petId,
-                    "name": "string"
-                  }
-                ],
-                "status": "available"
-              },
-          })
-          expect(response.status()).toBe(200);
-          console.log(await response.json());
-          expect(await response.json()).toStrictEqual( {  
-              id: petId,
-              category: { id: petId, name: 'string' },
-              name: 'T-Rex',
-              photoUrls: [ 'string' ],
-              tags: [ { id: petId, name: 'string' } ],
-              status: 'available'
-            }
-          ); 
-      })
-
-  //RADI
   test('Deletes a pet', async ({ request,baseURL }) => {
           const response = await request.delete(baseURL+'pet/'+petId, {
         })
           expect(response.status()).toBe(200);
           console.log(await response.json());
       }) 
-
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 test.describe('Store', () => {
@@ -241,8 +223,31 @@ test.describe('Store', () => {
 })
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 test.describe('User', () => {
+  //RADI
+   test('Create user', async ({ request,baseURL }) => {
+    const response = await request.post('https://petstore.swagger.io/v2/user', {
+        data:
+        {
+            "id": userId,
+            "username": userName,
+            "firstName": "edi",
+            "lastName": "crn",
+            "email": "email",
+            "password": "string",
+            "phone": "string",
+            "userStatus": 0
+        },
+    })
+      expect(response.status()).toBe(200);
+      console.log(await response.json());
+      expect(await response.json()).toStrictEqual(
+        {  
+          code: 200, type: 'unknown', message: '1992' 
+        }
+      ); 
+})
     //RADI
-      test('Creates list of users with given input array', async ({ request,baseURL }) => {
+   test('Creates list of users with given input array', async ({ request,baseURL }) => {
         const response = await request.post(baseURL+'user/createWithArray', {
             data:
             [
@@ -279,7 +284,7 @@ test.describe('User', () => {
           ); 
     })
     //RADI
-      test('Get user by user name', async ({ request,baseURL }) => {
+    test('Get user by user name', async ({ request,baseURL }) => {
         const response = await request.get(baseURL+'user/'+userName, {
           })
           expect(response.status()).toBe(200);
@@ -302,7 +307,7 @@ test.describe('User', () => {
       const response = await request.put(baseURL+'user/'+userName, {
         data:{
           "id": userId,
-          "username": "ecr update",
+          "username": userName,
           "firstName": "crnković",
           "lastName": "string",
           "email": "string",
@@ -337,29 +342,7 @@ test.describe('User', () => {
               console.log(await response.json());
 
     })
-    //RADI
-    test('post user', async ({ request,baseURL }) => {
-        const response = await request.post('https://petstore.swagger.io/v2/user', {
-            data:
-            {
-                "id": userId,
-                "username": userName,
-                "firstName": "edi",
-                "lastName": "crn",
-                "email": "email",
-                "password": "string",
-                "phone": "string",
-                "userStatus": 0
-            },
-        })
-          expect(response.status()).toBe(200);
-          console.log(await response.json());
-          expect(await response.json()).toStrictEqual(
-            {  
-              code: 200, type: 'unknown', message: '1992' 
-            }
-          ); 
-    })
+    
     //RADI
     test('Logs out current logged in user session', async ({ request,baseURL }) => {
         const response = await request.get(baseURL+'user/logout', {
