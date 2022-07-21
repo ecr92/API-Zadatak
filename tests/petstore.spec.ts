@@ -6,7 +6,7 @@ const userName= "ecr";
 const petStatus = 'sold';
 
 let del = false;
-
+test.describe.configure({ mode: 'serial' });
 test.describe('Pet', () => {
 
   test('Add a new pet to the store', async ({ request,baseURL }) => { 
