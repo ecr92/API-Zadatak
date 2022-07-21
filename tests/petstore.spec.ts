@@ -5,7 +5,6 @@ const orderId = 1;
 const userName= "ecr";
 const petStatus = 'sold';
 
-let del = false;
 test.describe.configure({ mode: 'serial' });
 test.describe('Pet', () => {
 
