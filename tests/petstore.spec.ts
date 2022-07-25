@@ -134,7 +134,7 @@ test.describe('Pet', () => {
         }
       ); 
       })
-  test.only('uploadImage', async ({ request,baseURL }) => {
+  test('uploadImage', async ({ request,baseURL }) => {
       const response = await request.post(baseURL+'pet/'+petId+'/uploadImage', {
         headers: {
          ContentType: "multipart/form-data",
