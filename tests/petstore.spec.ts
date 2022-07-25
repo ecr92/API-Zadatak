@@ -134,10 +134,10 @@ test.describe('Pet', () => {
         }
       ); 
       })
-  test('uploadImage', async ({ request,baseURL }) => {
+  test.only('uploadImage', async ({ request,baseURL }) => {
       const response = await request.post(baseURL+'pet/'+petId+'/uploadImage', {
         headers: {
-          ContentType: "multipart/form-data",
+         ContentType: "multipart/form-data",
          },
          multipart:
           {
@@ -147,7 +147,15 @@ test.describe('Pet', () => {
       })
       expect(response.status()).toBe(200);
       console.log(await response.json());
-      })
+      expect(await response.json()).toStrictEqual(
+        {  
+          code: 200,
+          type: 'unknown',
+          message: 'additionalMetadata: test image\nFile uploaded to ./null, 92 bytes'
+        }
+      );   
+    
+    })
   test('Finds Pets by status', async ({ request,baseURL }) => {
     const myStatus = {status: 'available'};
           const response = await request.get("https://petstore.swagger.io/v2/pet/findByStatus?status="+petStatus, { })
